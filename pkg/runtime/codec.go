@@ -51,6 +51,11 @@ func Encode(e Encoder, obj Object, overrides ...unversioned.GroupVersion) ([]byt
 // Decode is a convenience wrapper for decoding data into an Object.
 func Decode(d Decoder, data []byte) (Object, error) {
 	obj, _, err := d.Decode(data, nil, nil)
+	if obj != nil {
+		if string(reflect.TypeOf(obj).Elem().Name()) == "SensorAccess" {
+			fmt.Errorf("%v  \n\n %v \n\n", obj, data)
+		}
+	}
 	return obj, err
 }
 

@@ -1410,6 +1410,18 @@ type ReplicationControllerList struct {
 	Items []ReplicationController `json:"items"`
 }
 
+type SensorAccess struct {
+	unversioned.TypeMeta `json:",inline"`
+	ObjectMeta           `json:"metadata,omitempty"`
+	Access               int32 `json:"access,omitempty"`
+}
+
+type SensorAccessList struct {
+	unversioned.TypeMeta `json:",inline"`
+	unversioned.ListMeta `json:"metadata,omitempty"`
+	Items                []SensorAccess `json:"items"`
+}
+
 const (
 	// ClusterIPNone - do not assign a cluster IP
 	// no proxying required and no environment variables should be created for pods

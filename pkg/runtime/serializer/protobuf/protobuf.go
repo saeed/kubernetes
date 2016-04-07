@@ -94,6 +94,7 @@ func (s *Serializer) Decode(originalData []byte, gvk *unversioned.GroupVersionKi
 		into = versioned.Last()
 		obj, actual, err := s.Decode(originalData, gvk, into)
 		if err != nil {
+			panic(err)
 			return nil, actual, err
 		}
 		// the last item in versioned becomes into, so if versioned was not originally empty we reset the object
@@ -111,17 +112,21 @@ func (s *Serializer) Decode(originalData []byte, gvk *unversioned.GroupVersionKi
 	switch {
 	case len(originalData) == 0:
 		// TODO: treat like decoding {} from JSON with defaulting
+		panic(fmt.Errorf("empty data"))
 		return nil, nil, fmt.Errorf("empty data")
 	case len(originalData) < prefixLen || !bytes.Equal(s.prefix, originalData[:prefixLen]):
+		panic(originalData)
 		return nil, nil, fmt.Errorf("provided data does not appear to be a protobuf message, expected prefix %v", s.prefix)
 	case len(originalData) == prefixLen:
 		// TODO: treat like decoding {} from JSON with defaulting
+		panic(originalData)
 		return nil, nil, fmt.Errorf("empty body")
 	}
 
 	data := originalData[prefixLen:]
 	unk := runtime.Unknown{}
 	if err := unk.Unmarshal(data); err != nil {
+		panic(err)
 		return nil, nil, err
 	}
 
@@ -142,13 +147,16 @@ func (s *Serializer) Decode(originalData []byte, gvk *unversioned.GroupVersionKi
 		case runtime.IsNotRegisteredError(err):
 			pb, ok := into.(proto.Message)
 			if !ok {
+				panic(actual)
 				return nil, actual, errNotMarshalable{reflect.TypeOf(into)}
 			}
 			if err := proto.Unmarshal(unk.Raw, pb); err != nil {
+				panic(actual)
 				return nil, actual, err
 			}
 			return into, actual, nil
 		case err != nil:
+			panic(err)
 			return nil, actual, err
 		default:
 			copyKindDefaults(actual, typed)
@@ -162,9 +170,11 @@ func (s *Serializer) Decode(originalData []byte, gvk *unversioned.GroupVersionKi
 	}
 
 	if len(actual.Kind) == 0 {
+		panic(actual)
 		return nil, actual, runtime.NewMissingKindErr(fmt.Sprintf("%#v", unk.TypeMeta))
 	}
 	if len(actual.Version) == 0 {
+		panic(actual)
 		return nil, actual, runtime.NewMissingVersionErr(fmt.Sprintf("%#v", unk.TypeMeta))
 	}
 

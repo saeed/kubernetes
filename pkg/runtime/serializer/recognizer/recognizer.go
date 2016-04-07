@@ -56,6 +56,7 @@ func (d *decoder) Decode(data []byte, gvk *unversioned.GroupVersionKind, into ru
 		buf := bytes.NewBuffer(data)
 		ok, err := r.RecognizesData(buf)
 		if err != nil {
+			panic(err)
 			lastErr = err
 			continue
 		}
@@ -67,6 +68,7 @@ func (d *decoder) Decode(data []byte, gvk *unversioned.GroupVersionKind, into ru
 	for _, d := range d.blind {
 		out, actual, err := d.Decode(data, gvk, into)
 		if err != nil {
+			panic(err)
 			lastErr = err
 			continue
 		}
@@ -75,5 +77,6 @@ func (d *decoder) Decode(data []byte, gvk *unversioned.GroupVersionKind, into ru
 	if lastErr == nil {
 		lastErr = fmt.Errorf("no serialization format matched the provided data")
 	}
+	panic(lastErr)
 	return nil, nil, lastErr
 }

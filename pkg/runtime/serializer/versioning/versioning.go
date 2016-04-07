@@ -19,6 +19,7 @@ package versioning
 import (
 	"fmt"
 	"io"
+	"reflect"
 
 	"k8s.io/kubernetes/pkg/api/unversioned"
 	"k8s.io/kubernetes/pkg/runtime"
@@ -139,6 +140,13 @@ func (c *codec) Decode(data []byte, defaultGVK *unversioned.GroupVersionKind, in
 	}
 
 	obj, gvk, err := c.decoder.Decode(data, defaultGVK, into)
+	if obj != nil {
+		if string(reflect.TypeOf(obj).Elem().Name()) == "SensorAccess" {
+			fmt.Errorf("%#v  \n\n %#v \n\n", obj, data)
+			//panic(c.decoder)
+		}
+	}
+
 	if err != nil {
 		return nil, gvk, err
 	}
@@ -152,6 +160,7 @@ func (c *codec) Decode(data []byte, defaultGVK *unversioned.GroupVersionKind, in
 			return into, gvk, nil
 		}
 		if err := c.convertor.Convert(obj, into); err != nil {
+			panic(err)
 			return nil, gvk, err
 		}
 		if isVersioned {
@@ -204,6 +213,7 @@ func (c *codec) Decode(data []byte, defaultGVK *unversioned.GroupVersionKind, in
 	// Convert if needed.
 	out, err := c.convertor.ConvertToVersion(obj, targetGV.String())
 	if err != nil {
+		panic(err)
 		return nil, gvk, err
 	}
 	if isVersioned {

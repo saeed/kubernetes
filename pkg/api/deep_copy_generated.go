@@ -150,6 +150,8 @@ func init() {
 		DeepCopy_api_ReplicationControllerList,
 		DeepCopy_api_ReplicationControllerSpec,
 		DeepCopy_api_ReplicationControllerStatus,
+		DeepCopy_api_SensorAccess,
+		DeepCopy_api_SensorAccessList,
 		DeepCopy_api_ResourceQuota,
 		DeepCopy_api_ResourceQuotaList,
 		DeepCopy_api_ResourceQuotaSpec,
@@ -2352,6 +2354,39 @@ func DeepCopy_api_ReplicationController(in ReplicationController, out *Replicati
 	}
 	return nil
 }
+
+func DeepCopy_api_SensorAccess(in SensorAccess, out *SensorAccess, c *conversion.Cloner) error {
+	if err := unversioned.DeepCopy_unversioned_TypeMeta(in.TypeMeta, &out.TypeMeta, c); err != nil {
+		return err
+	}
+	if err := DeepCopy_api_ObjectMeta(in.ObjectMeta, &out.ObjectMeta, c); err != nil {
+		return err
+	}
+	out.Access = in.Access
+	return nil
+}
+
+func DeepCopy_api_SensorAccessList(in SensorAccessList, out *SensorAccessList, c *conversion.Cloner) error {
+	if err := unversioned.DeepCopy_unversioned_TypeMeta(in.TypeMeta, &out.TypeMeta, c); err != nil {
+		return err
+	}
+	if err := unversioned.DeepCopy_unversioned_ListMeta(in.ListMeta, &out.ListMeta, c); err != nil {
+		return err
+	}
+	if in.Items != nil {
+		in, out := in.Items, &out.Items
+		*out = make([]SensorAccess, len(in))
+		for i := range in {
+			if err := DeepCopy_api_SensorAccess(in[i], &(*out)[i], c); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
+	return nil
+}
+
 
 func DeepCopy_api_ReplicationControllerList(in ReplicationControllerList, out *ReplicationControllerList, c *conversion.Cloner) error {
 	if err := unversioned.DeepCopy_unversioned_TypeMeta(in.TypeMeta, &out.TypeMeta, c); err != nil {

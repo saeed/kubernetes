@@ -75,6 +75,7 @@ func (d *decoder) Decode(defaults *unversioned.GroupVersionKind, into runtime.Ob
 	// the stream until the frame is finished.
 	n, err := d.reader.Read(d.buf)
 	if err != nil {
+		panic(err)
 		return nil, nil, err
 	}
 	return d.decoder.Decode(d.buf[:n], defaults, into)
