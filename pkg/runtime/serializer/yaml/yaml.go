@@ -39,7 +39,6 @@ func NewDecodingSerializer(jsonSerializer runtime.Serializer) runtime.Serializer
 func (c yamlSerializer) Decode(data []byte, gvk *unversioned.GroupVersionKind, into runtime.Object) (runtime.Object, *unversioned.GroupVersionKind, error) {
 	out, err := yaml.ToJSON(data)
 	if err != nil {
-		panic(err)
 		return nil, nil, err
 	}
 	data = out
