@@ -1721,6 +1721,21 @@ type ReplicationControllerList struct {
 	Items []ReplicationController `json:"items"`
 }
 
+// +genclient=true
+
+type SensorAccess struct {
+  unversioned.TypeMeta `json:",inline"`
+  ObjectMeta `json:"metadata,omitempty"`
+  Access int32 `json:"access,omitempty"`
+}
+
+
+type SensorAccessList struct {
+  unversioned.TypeMeta `json:",inline"`
+  unversioned.ListMeta `json:"metadata,omitempty"`
+  Items []SensorAccess `json:"items"`
+}
+
 // Session Affinity Type string
 type ServiceAffinity string
 
@@ -2670,6 +2685,8 @@ const (
 	ResourceMemoryRequest ResourceName = "memory.request"
 	// Memory limit, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)
 	ResourceMemoryLimit ResourceName = "memory.limit"
+	
+	ResourceSensorAccesses ResourceName = "sensors"
 )
 
 // A ResourceQuotaScope defines a filter that must match each object tracked by a quota

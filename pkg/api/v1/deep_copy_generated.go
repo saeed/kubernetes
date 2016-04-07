@@ -171,6 +171,8 @@ func init() {
 		DeepCopy_v1_Volume,
 		DeepCopy_v1_VolumeMount,
 		DeepCopy_v1_VolumeSource,
+		DeepCopy_v1_SensorAccess,
+		DeepCopy_v1_SensorAccessList,
 	); err != nil {
 		// if one of the deep copy functions is malformed, detect it immediately.
 		panic(err)
@@ -2297,6 +2299,38 @@ func DeepCopy_v1_ReplicationController(in ReplicationController, out *Replicatio
 	}
 	if err := DeepCopy_v1_ReplicationControllerStatus(in.Status, &out.Status, c); err != nil {
 		return err
+	}
+	return nil
+}
+
+func DeepCopy_v1_SensorAccess(in SensorAccess, out *SensorAccess, c *conversion.Cloner) error {
+	if err := unversioned.DeepCopy_unversioned_TypeMeta(in.TypeMeta, &out.TypeMeta, c); err != nil {
+		return err
+	}
+	if err := DeepCopy_v1_ObjectMeta(in.ObjectMeta, &out.ObjectMeta, c); err != nil {
+		return err
+	}
+	out.Access = in.Access
+	return nil
+}
+
+func DeepCopy_v1_SensorAccessList(in SensorAccessList, out *SensorAccessList, c *conversion.Cloner) error {
+	if err := unversioned.DeepCopy_unversioned_TypeMeta(in.TypeMeta, &out.TypeMeta, c); err != nil {
+		return err
+	}
+	if err := unversioned.DeepCopy_unversioned_ListMeta(in.ListMeta, &out.ListMeta, c); err != nil {
+		return err
+	}
+	if in.Items != nil {
+		in, out := in.Items, &out.Items
+		*out = make([]SensorAccess, len(in))
+		for i := range in {
+			if err := DeepCopy_v1_SensorAccess(in[i], &(*out)[i], c); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
 	}
 	return nil
 }
