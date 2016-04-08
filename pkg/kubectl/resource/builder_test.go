@@ -87,6 +87,21 @@ func fakeClientWith(testName string, t *testing.T, data map[string]string) Clien
 	})
 }
 
+func testData2() (*api.SensorAccessList) {
+    sensors := &api.SensorAccessList{
+		ListMeta: unversioned.ListMeta{
+			ResourceVersion: "16",
+		},
+		Items: []api.SensorAccess{
+			 {
+				ObjectMeta: api.ObjectMeta{Name: "senfoo", Namespace: "test", ResourceVersion: "10"},
+				Access: 100,
+			 },
+		},
+    }
+    return sensors
+}
+
 func testData() (*api.PodList, *api.ServiceList) {
 	pods := &api.PodList{
 		ListMeta: unversioned.ListMeta{
@@ -528,6 +543,18 @@ func TestURLBuilderRequireNamespace(t *testing.T) {
 	if err == nil || !singular || len(test.Infos) != 0 {
 		t.Fatalf("unexpected response: %v %t %#v", err, singular, test.Infos)
 	}
+}
+
+func TestResourceByName2(t *testing.T) {
+	sensors := testData2()
+	b := NewBuilder(testapi.Default.RESTMapper(), api.Scheme, fakeClientWith("", t, map[string]string{
+	      "/namespaces/test/sensors/senfoo": runtime.EncodeOrDie(testapi.Default.Codec(), &sensors.Items[0]),
+	}), testapi.Default.Codec()).
+		 NamespaceParam("test")
+	if b.Do().Err() == nil {
+	  t.Errorf("unexpected non-error")
+	}
+	b.ResourceTypeOrNameArgs(true, "ssssensors", "senfoo")
 }
 
 func TestResourceByName(t *testing.T) {
@@ -1095,10 +1122,15 @@ func TestLatest(t *testing.T) {
 		ObjectMeta: api.ObjectMeta{Name: "baz", Namespace: "test", ResourceVersion: "15"},
 	}
 
+	newSensor := &api.SensorAccess{
+		ObjectMeta: api.ObjectMeta{Name: "bazo", Namespace: "test", ResourceVersion: "16"},
+	}
+
 	b := NewBuilder(testapi.Default.RESTMapper(), api.Scheme, fakeClientWith("", t, map[string]string{
 		"/namespaces/test/pods/foo":     runtime.EncodeOrDie(testapi.Default.Codec(), newPod),
 		"/namespaces/test/pods/bar":     runtime.EncodeOrDie(testapi.Default.Codec(), newPod2),
 		"/namespaces/test/services/baz": runtime.EncodeOrDie(testapi.Default.Codec(), newSvc),
+		"/namespaces/test/sensors/bazo": runtime.EncodeOrDie(testapi.Default.Codec(), newSensor),
 	}), testapi.Default.Codec()).
 		NamespaceParam("other").Stream(r, "STDIN").Flatten().Latest()
 

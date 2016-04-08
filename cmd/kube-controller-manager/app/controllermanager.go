@@ -53,6 +53,7 @@ import (
 	namespacecontroller "k8s.io/kubernetes/pkg/controller/namespace"
 	nodecontroller "k8s.io/kubernetes/pkg/controller/node"
 	persistentvolumecontroller "k8s.io/kubernetes/pkg/controller/persistentvolume"
+	sensoraccesscontroller "k8s.io/kubernetes/pkg/controller/sensoraccess"
 	"k8s.io/kubernetes/pkg/controller/podautoscaler"
 	"k8s.io/kubernetes/pkg/controller/podautoscaler/metrics"
 	replicaset "k8s.io/kubernetes/pkg/controller/replicaset"
@@ -239,6 +240,7 @@ func StartControllers(s *options.CMServer, kubeClient *client.Client, kubeconfig
 		api.Kind("PersistentVolumeClaim"),
 		api.Kind("Secret"),
 		api.Kind("ConfigMap"),
+		api.Kind("SensorAccess"),
 	}
 	resourceQuotaControllerOptions := &resourcequotacontroller.ResourceQuotaControllerOptions{
 		KubeClient:                resourceQuotaControllerClient,
@@ -249,6 +251,17 @@ func StartControllers(s *options.CMServer, kubeClient *client.Client, kubeconfig
 		GroupKindsToReplenish:     groupKindsToReplenish,
 	}
 	go resourcequotacontroller.NewResourceQuotaController(resourceQuotaControllerOptions).Run(s.ConcurrentResourceQuotaSyncs, wait.NeverStop)
+
+	sensorAccessControllerClient := clientset.NewForConfigOrDie(restclient.AddUserAgent(kubeconfig, "sensoraccess-controller"))
+	sensorRegistery := quotainstall.NewRegistry(sensorAccessControllerClient)
+	sensorAccessControllerOptions := &sensoraccesscontroller.SensorAccessControllerOptions{
+		KubeClient:            sensorAccessControllerClient,
+		ResyncPeriod:          controller.StaticResyncPeriodFunc(s.ResourceQuotaSyncPeriod.Duration),
+		Registry:              sensorRegistery,
+		GroupKindsToReplenish: groupKindsToReplenish,
+	}
+
+	go sensoraccesscontroller.NewSensorAccessController(sensorAccessControllerOptions).Run(5, wait.NeverStop)
 
 	// If apiserver is not running we should wait for some time and fail only then. This is particularly
 	// important when we start apiserver and controller manager at the same time.

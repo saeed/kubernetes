@@ -148,12 +148,10 @@ func (s *Serializer) Decode(originalData []byte, gvk *unversioned.GroupVersionKi
 	// use the target if necessary
 	obj, err := runtime.UseOrCreateObject(s.typer, s.creater, *actual, into)
 	if err != nil {
-		panic(err)
 		return nil, actual, err
 	}
 
 	if err := codec.NewDecoderBytes(data, new(codec.JsonHandle)).Decode(obj); err != nil {
-		panic(err)
 		return nil, actual, err
 	}
 	return obj, actual, nil

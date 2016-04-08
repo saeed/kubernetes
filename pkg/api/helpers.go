@@ -103,6 +103,7 @@ var podComputeQuotaResources = sets.NewString(
 	string(ResourceLimitsMemory),
 	string(ResourceRequestsCPU),
 	string(ResourceRequestsMemory),
+	string(ResourceSensorAccesses),
 )
 
 // IsResourceQuotaScopeValidForResource returns true if the resource applies to the specified scope
@@ -152,6 +153,7 @@ var standardQuotaResources = sets.NewString(
 	string(ResourceSecrets),
 	string(ResourcePersistentVolumeClaims),
 	string(ResourceConfigMaps),
+	string(ResourceSensorAccesses),
 )
 
 // IsStandardQuotaResourceName returns true if the resource is known to
@@ -175,6 +177,7 @@ var standardResources = sets.NewString(
 	string(ResourceConfigMaps),
 	string(ResourcePersistentVolumeClaims),
 	string(ResourceStorage),
+	string(ResourceSensorAccesses),
 )
 
 // IsStandardResourceName returns true if the resource is known to the system
@@ -190,6 +193,7 @@ var integerResources = sets.NewString(
 	string(ResourceSecrets),
 	string(ResourceConfigMaps),
 	string(ResourcePersistentVolumeClaims),
+	string(ResourceSensorAccesses),
 )
 
 // IsIntegerResourceName returns true if the resource is measured in integer values

@@ -390,6 +390,30 @@ func ExamplePrintReplicationControllerWithNamespace() {
 	// beep        foo       1         1         10y
 }
 
+func ExamplePrintSensorAccessWithNamespace() {
+        f, tf, codec := NewAPIFactory()
+	tf.Printer = kubectl.NewHumanReadablePrinter(false, true, false, false, false, false, []string{})
+	tf.Client = &fake.RESTClient{
+	    Codec:  codec,
+	    Client: nil,
+	}
+	cmd := NewCmdRun(f, os.Stdin, os.Stdout, os.Stderr)
+	ctrl := &api.SensorAccess{
+	      ObjectMeta: api.ObjectMeta{
+			    Name:              "foo",
+			    Namespace:         "beep",
+			    Labels:            map[string]string{"foo": "bar"},
+			    CreationTimestamp: unversioned.Time{Time: time.Now().AddDate(-10, 0, 0)},
+	      },
+	      Access: 1,
+	}
+	mapper, _ := f.Object(false)
+        err := f.PrintObject(cmd, mapper, ctrl, os.Stdout)
+	if err != nil {
+	  fmt.Printf("Unexpected error: %v", err)
+	}
+}
+
 func ExamplePrintMultiContainersReplicationControllerWithWide() {
 	f, tf, codec := NewAPIFactory()
 	tf.Printer = kubectl.NewHumanReadablePrinter(false, false, true, false, false, false, []string{})
