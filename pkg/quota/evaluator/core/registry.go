@@ -31,6 +31,7 @@ func NewRegistry(kubeClient clientset.Interface) quota.Registry {
 	resourceQuota := NewResourceQuotaEvaluator(kubeClient)
 	secret := NewSecretEvaluator(kubeClient)
 	configMap := NewConfigMapEvaluator(kubeClient)
+	sensorAccess := NewSensorAccessEvaluator(kubeClient)
 	persistentVolumeClaim := NewPersistentVolumeClaimEvaluator(kubeClient)
 	return &generic.GenericRegistry{
 		InternalEvaluators: map[unversioned.GroupKind]quota.Evaluator{
@@ -41,6 +42,7 @@ func NewRegistry(kubeClient clientset.Interface) quota.Registry {
 			configMap.GroupKind():             configMap,
 			resourceQuota.GroupKind():         resourceQuota,
 			persistentVolumeClaim.GroupKind(): persistentVolumeClaim,
+			sensorAccess.GroupKind():          sensorAccess,
 		},
 	}
 }
