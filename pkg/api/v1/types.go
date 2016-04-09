@@ -2686,7 +2686,7 @@ const (
 	// Memory limit, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)
 	ResourceMemoryLimit ResourceName = "memory.limit"
 	
-	ResourceSensorAccesses ResourceName = "sensors"
+	ResourceSensorAccesses ResourceName = "sensoraccesses"
 )
 
 // A ResourceQuotaScope defines a filter that must match each object tracked by a quota

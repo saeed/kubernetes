@@ -256,6 +256,10 @@ func init() {
 		Convert_api_RangeAllocation_To_v1_RangeAllocation,
 		Convert_v1_ReplicationController_To_api_ReplicationController,
 		Convert_api_ReplicationController_To_v1_ReplicationController,
+		Convert_api_SensorAccess_To_v1_SensorAccess,
+		Convert_v1_SensorAccess_To_api_SensorAccess,
+		Convert_api_SensorAccessList_To_v1_SensorAccessList,
+		Convert_v1_SensorAccessList_To_api_SensorAccessList,
 		Convert_v1_ReplicationControllerList_To_api_ReplicationControllerList,
 		Convert_api_ReplicationControllerList_To_v1_ReplicationControllerList,
 		Convert_v1_ReplicationControllerSpec_To_api_ReplicationControllerSpec,
@@ -5867,6 +5871,34 @@ func Convert_v1_ReplicationController_To_api_ReplicationController(in *Replicati
 	return autoConvert_v1_ReplicationController_To_api_ReplicationController(in, out, s)
 }
 
+func Convert_v1_SensorAccess_To_api_SensorAccess(in *SensorAccess, out *api.SensorAccess, s conversion.Scope) error {
+	if defaulting, found := s.DefaultingInterface(reflect.TypeOf(*in)); found {
+		defaulting.(func(*SensorAccess))(in)
+	}
+	if err := api.Convert_unversioned_TypeMeta_To_unversioned_TypeMeta(&in.TypeMeta, &out.TypeMeta, s); err != nil {
+		return err
+	}
+	if err := Convert_v1_ObjectMeta_To_api_ObjectMeta(&in.ObjectMeta, &out.ObjectMeta, s); err != nil {
+		return err
+	}
+	out.Access = int32(in.Access)
+	return nil
+}
+
+func Convert_api_SensorAccess_To_v1_SensorAccess(in *api.SensorAccess, out *SensorAccess, s conversion.Scope) error {
+	if defaulting, found := s.DefaultingInterface(reflect.TypeOf(*in)); found {
+		defaulting.(func(*api.SensorAccess))(in)
+	}
+	if err := api.Convert_unversioned_TypeMeta_To_unversioned_TypeMeta(&in.TypeMeta, &out.TypeMeta, s); err != nil {
+		return err
+	}
+	if err := Convert_api_ObjectMeta_To_v1_ObjectMeta(&in.ObjectMeta, &out.ObjectMeta, s); err != nil {
+		return err
+	}
+	out.Access = int32(in.Access)
+	return nil
+}
+
 func autoConvert_api_ReplicationController_To_v1_ReplicationController(in *api.ReplicationController, out *ReplicationController, s conversion.Scope) error {
 	if defaulting, found := s.DefaultingInterface(reflect.TypeOf(*in)); found {
 		defaulting.(func(*api.ReplicationController))(in)
@@ -5888,6 +5920,54 @@ func autoConvert_api_ReplicationController_To_v1_ReplicationController(in *api.R
 
 func Convert_api_ReplicationController_To_v1_ReplicationController(in *api.ReplicationController, out *ReplicationController, s conversion.Scope) error {
 	return autoConvert_api_ReplicationController_To_v1_ReplicationController(in, out, s)
+}
+
+func Convert_v1_SensorAccessList_To_api_SensorAccessList(in *SensorAccessList, out *api.SensorAccessList, s conversion.Scope) error {
+	if defaulting, found := s.DefaultingInterface(reflect.TypeOf(*in)); found {
+		defaulting.(func(*SensorAccessList))(in)
+	}
+	if err := api.Convert_unversioned_TypeMeta_To_unversioned_TypeMeta(&in.TypeMeta, &out.TypeMeta, s); err != nil {
+		return err
+	}
+	if err := api.Convert_unversioned_ListMeta_To_unversioned_ListMeta(&in.ListMeta, &out.ListMeta, s); err != nil {
+		return err
+	}
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]api.SensorAccess, len(*in))
+		for i := range *in {
+			if err := Convert_v1_SensorAccess_To_api_SensorAccess(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
+	return nil
+}
+
+func Convert_api_SensorAccessList_To_v1_SensorAccessList(in *api.SensorAccessList, out *SensorAccessList, s conversion.Scope) error {
+	if defaulting, found := s.DefaultingInterface(reflect.TypeOf(*in)); found {
+		defaulting.(func(*api.SensorAccessList))(in)
+	}
+	if err := api.Convert_unversioned_TypeMeta_To_unversioned_TypeMeta(&in.TypeMeta, &out.TypeMeta, s); err != nil {
+		return err
+	}
+	if err := api.Convert_unversioned_ListMeta_To_unversioned_ListMeta(&in.ListMeta, &out.ListMeta, s); err != nil {
+		return err
+	}
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]SensorAccess, len(*in))
+		for i := range *in {
+			if err := Convert_api_SensorAccess_To_v1_SensorAccess(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
+	return nil
 }
 
 func autoConvert_v1_ReplicationControllerList_To_api_ReplicationControllerList(in *ReplicationControllerList, out *api.ReplicationControllerList, s conversion.Scope) error {

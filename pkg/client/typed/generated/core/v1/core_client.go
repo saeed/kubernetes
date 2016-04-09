@@ -38,11 +38,16 @@ type CoreInterface interface {
 	SecretsGetter
 	ServicesGetter
 	ServiceAccountsGetter
+	SensorAccessesGetter
 }
 
 // CoreClient is used to interact with features provided by the Core group.
 type CoreClient struct {
 	*restclient.RESTClient
+}
+
+func (c *CoreClient) SensorAccesses(namespace string) SensorAccessInterface {
+	return newSensorAccesses(c, namespace)
 }
 
 func (c *CoreClient) ComponentStatuses() ComponentStatusInterface {

@@ -68,6 +68,7 @@ import (
 	replicasetetcd "k8s.io/kubernetes/pkg/registry/replicaset/etcd"
 	resourcequotaetcd "k8s.io/kubernetes/pkg/registry/resourcequota/etcd"
 	secretetcd "k8s.io/kubernetes/pkg/registry/secret/etcd"
+	sensoraccessetcd "k8s.io/kubernetes/pkg/registry/sensoraccess/etcd"
 	"k8s.io/kubernetes/pkg/registry/service"
 	etcdallocator "k8s.io/kubernetes/pkg/registry/service/allocator/etcd"
 	serviceetcd "k8s.io/kubernetes/pkg/registry/service/etcd"
@@ -355,6 +356,7 @@ func (m *Master) initV1ResourcesStorage(c *Config) {
 	eventStorage := eventetcd.NewREST(restOptions("events"), uint64(c.EventTTL.Seconds()))
 	limitRangeStorage := limitrangeetcd.NewREST(restOptions("limitRanges"))
 
+	sensorAccessStorage := sensoraccessetcd.NewREST(restOptions("sensorAccesses"))
 	resourceQuotaStorage, resourceQuotaStatusStorage := resourcequotaetcd.NewREST(restOptions("resourceQuotas"))
 	secretStorage := secretetcd.NewREST(restOptions("secrets"))
 	serviceAccountStorage := serviceaccountetcd.NewREST(restOptions("serviceAccounts"))
@@ -435,6 +437,8 @@ func (m *Master) initV1ResourcesStorage(c *Config) {
 		"nodes/proxy":  nodeStorage.Proxy,
 
 		"events": eventStorage,
+
+		"sensoraccesses": sensorAccessStorage,
 
 		"limitRanges":                   limitRangeStorage,
 		"resourceQuotas":                resourceQuotaStorage,

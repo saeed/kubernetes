@@ -33,6 +33,11 @@ func addDefaultingFuncs(scheme *runtime.Scheme) {
 			obj.Stdout = true
 			obj.Stderr = true
 		},
+		func(obj *SensorAccess) {
+			if obj.Access == 0 {
+			    obj.Access = 1
+			}
+		},
 		func(obj *ReplicationController) {
 			var labels map[string]string
 			if obj.Spec.Template != nil {

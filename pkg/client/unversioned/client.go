@@ -50,6 +50,10 @@ type Interface interface {
 	Discovery() discovery.DiscoveryInterface
 }
 
+func (c *Client) SensorAccesses(namespace string) SensorAccessInterface {
+  return newSensorAccesses(c, namespace)
+}
+
 func (c *Client) ReplicationControllers(namespace string) ReplicationControllerInterface {
 	return newReplicationControllers(c, namespace)
 }

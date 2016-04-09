@@ -174,6 +174,12 @@ func ValidateReplicationControllerName(name string, prefix bool) (bool, string) 
 	return NameIsDNSSubdomain(name, prefix)
 }
 
+
+
+func ValidateSensorAccessName(name string, prefix bool) (bool, string) {
+	return NameIsDNSSubdomain(name, prefix)
+}
+
 // ValidateServiceName can be used to check whether the given service name is valid.
 // Prefix indicates this name will be used as part of generation, in which case
 // trailing dashes are allowed.
@@ -1851,6 +1857,17 @@ func ValidateReplicationController(controller *api.ReplicationController) field.
 	return allErrs
 }
 
+func ValidateSensorAccess(sensor *api.SensorAccess) field.ErrorList {
+	allErrs := ValidateObjectMeta(&sensor.ObjectMeta, true, ValidateSensorAccessName, field.NewPath("metadata"))
+	allErrs = append(allErrs, ValidateNonnegativeField(int64(sensor.Access), field.NewPath("access"))...)
+	return allErrs
+}
+
+func ValidateSensorAccessUpdate(sensor, oldSensor *api.SensorAccess) field.ErrorList {
+        allErrs := ValidateObjectMetaUpdate(&sensor.ObjectMeta, &oldSensor.ObjectMeta, field.NewPath("metadata"))
+	allErrs = append(allErrs, ValidateNonnegativeField(int64(sensor.Access), field.NewPath("access"))...)
+	return allErrs
+}
 // ValidateReplicationControllerUpdate tests if required fields in the replication controller are set.
 func ValidateReplicationControllerUpdate(controller, oldController *api.ReplicationController) field.ErrorList {
 	allErrs := ValidateObjectMetaUpdate(&controller.ObjectMeta, &oldController.ObjectMeta, field.NewPath("metadata"))
